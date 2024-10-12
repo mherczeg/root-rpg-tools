@@ -1,1 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
 
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Root RPG NPC Generator</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f9;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+        }
+
+        .container {
+            text-align: center;
+        }
+
+        button {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+            margin-bottom: 10px;
+        }
+
+        button:hover {
+            background-color: #45a049;
+        }
+
+        .output {
+            margin-top: 20px;
+            text-align: left;
+            width: 300px;
+            max-height: 400px;
+            overflow-y: auto;
+            border: 1px solid #ccc;
+            padding: 10px;
+            background-color: white;
+        }
+
+        .output:empty {
+            display: none;
+        }
+
+        .line {
+            padding: 5px 0;
+        }
+
+        .line:not(:last-child) {
+            border-bottom: 1px solid #eee;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <button id="generateButton">Generate NPC</button>
+        <div class="output" id="outputContainer"></div>
+    </div>
+
+    <script>
+        const button = document.getElementById('generateButton');
+        const outputContainer = document.getElementById('outputContainer');
+
+        const names = ['Aimee', 'Alvin', 'Anders', 'Alyse', 'Bhea', 'Billi', 'Braden', 'Buford Cesspyr', 'Cloak', 'Cinder', 'Constance', 'Dawna', 'Dewly Doneel', 'Dugan', 'Ellaine', 'Emmie', 'Ewan', 'Eward', 'Flannera Fog', 'Foster', 'Frink', 'Gemma', 'Golden', 'Greta', 'Gustav Harper', 'Henny', 'Hinnic', 'Howerd', 'Igrin', 'Ilso', 'Inda', 'Irwen Jacly', 'Jasper', 'Jinx', 'Johann', 'Keilee', 'Kagan', 'Keera', 'Konnor Laina', 'Lindyn', 'Lockler', 'Longtooth', 'Masgood', 'Mint', 'Monca', 'Murty', 'Nail', 'Nan', 'Nigel', 'Nomi', 'Olaga', 'Omin Orry', 'Oxley', 'Pattee', 'Phona', 'Pintin', 'Prewitt', 'Quay Quentin', 'Quill', 'Quinella', 'Reece', 'Rhodia', 'Roric', 'Rose Sarra', 'Selwin', 'Sorin', 'Stasee', 'Tammora', 'Thickfur', 'Timber Tondric', 'Ulveny', 'Ulvid', 'Ummery', 'Urma', 'Vance', 'Vennic', 'Vittora', 'Vost', 'Wanda', 'Wettlecress', 'Whickam', 'Woodleaf Xander', 'Xara Xeelie', 'Xim', 'Yasmin', 'Yates', 'Yolenda', 'Yotterie Zachrie', 'Zain', 'Zoic', 'Zola', 'Briarstone', 'Tanglefoot', 'Mossbell', 'Thistlewick', 'Grimfang', 'Silverfeather', 'Sableclaw', 'Nettlefern', 'Shadebough', 'Brindle', 'Dappledawn', 'Thornheart', 'Oakwise', 'Fernlock', 'Rivertail', 'Bramble', 'Wisp', 'Russetpaw', 'Flaxen', 'Duskwatcher', 'Lynna Wildpaw', 'Kethik', 'Bracken', 'Embermoss', 'Stormbranch', 'Hawkspur', 'Hollowpaw', 'Crowley', 'Twilight', 'Whisk', 'Snout', 'Duskwalker', 'Flint', 'Thistledown', 'Moonlight', 'Pineclaw', 'Nettlebrook', 'Rowan', 'Clover', 'Hickory', 'Barkley', 'Oaken', 'Marshstone', 'Bramblestem'];
+
+        const species = ['badger', 'beaver', 'bluejay', 'cat', 'fox', 'hawk', 'lizard', 'mouse opossum', 'otter', 'owl', 'raccoon', 'rabbit', 'squirrel', 'wolf', 'crow', 'weasel', 'ferret', 'hedgehog', 'mole', 'chipmunk', 'sparrow', 'skunk', 'bat', 'tortoise', 'snake', 'wren', 'magpie', 'frog', 'newt', 'stoat', 'puffin', 'lynx'];
+
+        const drives = ['to get revenge', 'to get rich', 'to make family safe to make home safe', 'to gain power', 'to explore to build something magnificent', 'to resist invaders to defend the weak', 'to destroy an enemy', 'to wage war to prove worth', 'to undermine a figure of power to find comfort', 'to serve a higher cause', 'to escape to negotiate peaceful resolutions', 'to survive at all costs to earn social status and position', 'to take control to exert power and authority on others', 'to lay waste', 'to seek justice', 'to avenge a loved one', 'to uncover hidden truths', 'to spread influence', 'to control the marketplace', 'to protect the wilderness', 'to achieve artistic greatness', 'to sabotage a rival', 'to become immortalized in history', 'to fulfill a prophecy', 'to find spiritual enlightenment', 'to bring order to chaos', 'to collect rare treasures', 'to amass followers', 'to redeem past mistakes', 'to escape a curse', 'to discover ancient knowledge', 'to forge alliances', 'to break an oppressive system', 'to conquer new lands', 'to keep a dark secret hidden', 'to reunite with lost family', 'to disrupt the status quo', 'to uncover corruption', 'to prove a conspiracy', 'to secure lasting peace', 'to break free of social expectations', 'to outwit a rival', 'to mentor others', 'to eliminate competition'];
+
+        const pick = (list) => list[Math.floor(Math.random() * list.length)];
+
+        button.addEventListener('click', function () {
+            const newText = document.createElement('div');
+            newText.classList.add('line');
+            newText.innerText = `${pick(names)} is a ${pick(species)} who wants ${pick(drives)}.`;
+            outputContainer.insertBefore(newText, outputContainer.firstChild);
+        });
+    </script>
+</body>
+
+</html>
